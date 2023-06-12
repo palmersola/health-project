@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     static UserList userList = new UserList();
@@ -30,7 +31,8 @@ public class Main {
                        1.) See caloric difference for today
                        2.) Check low sleep
                        3.) See all workouts
-                       8.) Quit
+                       4.) Weekly Report
+                       5.) Quit
                     """);
             int choice = Integer.parseInt(scanner.nextLine());
             switch (choice) {
@@ -58,13 +60,19 @@ public class Main {
                         }
                     }
                 }
-                case 8 -> loop = false;
+                case 4 -> {
+                    System.out.println("Weekly Report");
+                    System.out.println("Average sleep: " + user.getSleep().getAverage());
+                    double calories =  user.getFood().getDailyList()
+                            .stream()
+                            .collect(Collectors.averagingInt(FoodDaily::getCalories));
+                    System.out.println("Average calories consumed: " + calories);
+
+                }
+                case 5 -> loop = false;
             }
         }
-
-
         saveData();
-
     }
 
     public static void saveData() throws IOException {
@@ -167,8 +175,8 @@ public class Main {
                 case "Sleep," -> {
                     ArrayList<Sleep> sleepList = new ArrayList<>();
                     line = bufferedReader.readLine(); // Read average sleep
-                    String[]poopSock = line.split(",");
-                    double averageSleep = Double.parseDouble(poopSock[0]);
+                    String[]split = line.split(",");
+                    double averageSleep = Double.parseDouble(split[0]);
                     while (true) {
                         line = bufferedReader.readLine();
                         if (line.equals("done,")) break;
